@@ -1,0 +1,220 @@
+
+@font-face {
+ font-family: 'Aller Lt';
+ src: url('./Aller_Lt.ttf');
+}
+
+h1 {
+ font-family: 'Aller Lt';
+ font-size:32px;
+ line-height:32px;
+ margin-bottom: 0px;
+}
+
+h2 {
+ font-size:22px;
+ line-height:22px;
+
+}
+
+
+h3 {
+    font-size: 17px;
+    line-height: 14px;
+}
+
+
+.zoom.zoom-out-1 {
+	
+}
+
+.zoom.zoom-out-2 {
+	
+}
+
+.zoom.zoom-out-3 {
+	
+}
+
+.zoom.zoom-out-4,.zoom.zoom-out-prev-4 {
+	
+}
+
+/* -------------------------------------------------------------------------- */
+h1 {
+	font-size: 170%;
+}
+
+h2 {
+	font-size: 110%;
+}
+
+/* -------------------------------------------------------------------------- */
+.leaflet-container {
+	background-color: black;
+}
+
+/* -------------------------------------------------------------------------- */
+.content-layer-container {
+	
+}
+
+.content-layer-body {
+	text-align: left;
+	line-height: 1.5em;
+	font-size: 1.0em;
+	padding: 0;
+}
+
+.content-layer-body img {
+	max-width: 100%;
+	width: 100%;
+	height: auto;
+	margin: 0;
+	padding: 0;
+	border: none;
+	height: auto;
+	width: 100%;
+	height: auto;
+	border: 1px solid #eee;
+	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+	-moz-box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+	-webkit-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+}
+
+.content-layer-body h1,.content-layer-body h2,.content-layer-body h3,.content-layer-body h4,.content-layer-body h5,.content-layer-body h6,.content-layer-body p,.content-layer-body li
+	{
+	line-height: 100%;
+	margin: 0;
+	margin-top: 0.8em;
+	padding: 0;
+}
+
+.content-layer-body h1 {
+	margin-top: 0;
+}
+
+.content-layer-body h2.umx-info-summary {
+	margin-top: 0.2em;
+}
+
+.content-layer-body section {
+	text-align: left;
+	padding: 2em;
+	border: 1px solid #eee;
+    background-color: #fcfcfc;
+}
+
+
+.content-layer-body.zoom-out-1 section {
+	padding: 1em;
+}
+
+.content-layer-body.zoom-out-prev-1 section {
+	padding: 0.5em;
+}
+
+.content-layer-body.zoom-out-prev-2 section {
+	padding: 0.1em;
+}
+
+.content-layer-body section h1:first {
+	margin-top: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/*
+ - .umx-info-main - the main (always visible) block
+ - .umx-info-details - this block is visible only when the box is zoomed
+ - .umx-info-image - the main image (contained in the main block)
+ - .umx-info-summary - the content of the main block visible when the image is hidden
+ 
+*/
+.content-layer-body .umx-info-image {
+	
+}
+
+.content-layer-body .umx-info-image img {
+	width: 100%;
+}
+
+.content-layer-body .umx-info-summary {
+	font-size: 200%;
+}
+
+.content-layer-body.zoom-out .umx-info-details {
+	display: none;
+}
+
+.content-layer-body.zoom-out .umx-info-main {
+	width: 100%;
+}
+
+.content-layer-body.zoom-out-1 .umx-info-image img {
+	width: 50%;
+	margin: 0 auto;
+}
+
+.content-layer-body.zoom-out-prev-1 .umx-info-image {
+	display: none;
+}
+
+.zoom-out-3 h1 {
+	font-size: 100%;
+	text-weight: bold;
+}
+
+.umx-shadow {
+	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+	-moz-box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+	-webkit-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+}
+
+.umx-marker {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	border-width: 3px;
+	border-style: solid;
+	-moz-border-radius: 18px;
+	-webkit-border-radius: 18px;
+	-khtml-border-radius: 18px;
+	border-radius: 18px;
+	background-color: white;
+	border-color: #d6d6d6;
+}
+
+.umx-marker .icon {
+	margin: 2px;
+	margin-top: 0;
+}
+
+.icon-promo {
+	background-image: url("./icons/icon-pin.png");
+	background-position: 1px 1px;
+}
+
+
+body {
+font-family: "Aller Lt", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.page-header {
+margin: 20px 0 10px;
+}
+
+
+
+
+/* Footer
+-------------------------------------------------- */
+.footer {
+    margin-top: 25px;
+    padding: 5px 0 5px;
+    border-top: 1px solid #e5e5e5;
+}
+
+.footer p {
+    margin-bottom: 0;
+    color: #555;
+}
