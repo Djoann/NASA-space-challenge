@@ -37,6 +37,10 @@ body {
 	border-radius: 0px;;
 }
 
+/* .leaflet-popup-scrolled::-webkit-scrollbar {
+	width: 10px;
+	height: 16px;
+} */
 .umx-shadow {
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 	-moz-box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
@@ -45,8 +49,6 @@ body {
 
 .umx-marker {
 	display: inline-block;
-	width: 18px;
-	height: 18px;
 	border-width: 3px;
 	border-style: solid;
 	-moz-border-radius: 18px;
@@ -55,6 +57,17 @@ body {
 	border-radius: 18px;
 	background-color: white;
 	border-color: gray;
+	white-space: nowrap;
+}
+
+.leaflet-marker-icon {
+	width: none;
+	height: none;
+}
+
+.umx-marker .umx-title {
+	color: white;
+	margin-left: 0.5em;
 }
 
 .umx-marker .icon {

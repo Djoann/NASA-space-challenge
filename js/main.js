@@ -35,21 +35,26 @@
     /** Creates and returns a new marker for the specified annotation. */
     ImageCanvas.prototype._newMarker = function(annotation) {
         var type = annotation.markerType || "icon-tag";
-        var title = annotation.title ? " " + annotation.title : "";
+        var title = annotation.title ? "<span class='umx-title'>"
+                + annotation.title + "</span>" : "";
         var icon = new L.DivIcon({
-            iconSize : new L.Point(18, 18),
+            iconSize : new L.Point(18, null),
             iconAnchor : new L.Point(9, 9),
             popupAnchor : new L.Point(0, 0),
             className : "umx-marker umx-shadow",
-            html : "<div class='umx-title'><i class='icon " + type + "'></i>"
-                    + title + "</div>"
+            html : "<div><i class='icon " + type + "'></i>" + title + "</div>"
         });
         var marker = L.marker(annotation.position, {
             icon : icon
         });
+        var content = $(annotation.content).get(0);
+        marker.bindPopup(content, {
+            maxWidth : 500,
+            minWidth : 300,
+            maxHeight : 300
+        });
         marker.on("click", function() {
-            // Fixme: replace by a real annotation.
-            alert("Clicked!")
+            marker.openPopup();
         })
         return marker;
     }
@@ -98,7 +103,6 @@
      */
     function getImageConfig(article) {
         var urlMask = article.attr("data-image-url");
-        urlMask += "-umx/tiles/{z}/{x}_{y}.jpg";
         var width = article.attr("data-image-width");
         var height = article.attr("data-image-height");
         var zoom = article.attr("data-image-zoom") || "10";
@@ -119,7 +123,7 @@
             var point = L.latLng(array);
             return point;
         }
-        var pos = getLatLng(section, "data-pos");
+        var pos = getLatLng(section, "data-top-left");
         var title = section.find("h1").html();
         return {
             position : pos,
@@ -157,6 +161,16 @@
     }
 
     /**
+     * Shows the content of the specified article on the screen around an image
+     * defined in the article parameters.
+     */
+    function showArticleContent(canvas, article) {
+        var imageConfig = getImageConfig(article);
+        var imageAnnotations = getImageAnnotations(article);
+        canvas.setImage(imageConfig, imageAnnotations);
+    }
+
+    /**
      * Asynchronously loads and puts on the screen the information loaded from
      * the specified HTML file.
      */
@@ -165,9 +179,7 @@
             url : href,
             success : function(result) {
                 var article = getArticle(result + "");
-                var imageConfig = getImageConfig(article);
-                var imageAnnotations = getImageAnnotations(article);
-                canvas.setImage(imageConfig, imageAnnotations);
+                showArticleContent(canvas, article);
             },
             async : true
         });
@@ -176,12 +188,14 @@
     /** Main function activating the screen */
     $(document).ready(function() {
         var canvas = new ImageCanvas({
-            debug : true,
+// debug : true,
             element : $("#main-canvas"),
             zoom : 11,
             maxZoom : 16,
             minZoom : 8
         });
+        var mainArticle = $("article");
+        showArticleContent(canvas, mainArticle);
         $("#navigation-bottom a").each(function(pos, e) {
             e = $(e);
             var href = e.attr("href");
