@@ -1,0 +1,63 @@
+body {
+	width: 100%;
+	height: 100%;
+	font-family: 'Open Sans', Helvetica, Arial, sans-serif, 12px;
+}
+
+#navigation-top {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+}
+
+#main-canvas {
+	position: fixed;
+	top: 40px;
+	left: 0px;
+	bottom: 40px;
+	right: 0px;
+	background-color: #01021E;
+}
+
+#navigation-bottom {
+	position: fixed;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+}
+
+#navigation-bottom .navbar {
+	margin: 0;
+}
+
+.leaflet-popup-content-wrapper {
+	-webkit-border-radius: 0px;;
+	-moz-border-radius: 0px;;
+	border-radius: 0px;;
+}
+
+.umx-shadow {
+	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+	-moz-box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+	-webkit-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+}
+
+.umx-marker {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	border-width: 3px;
+	border-style: solid;
+	-moz-border-radius: 18px;
+	-webkit-border-radius: 18px;
+	-khtml-border-radius: 18px;
+	border-radius: 18px;
+	background-color: white;
+	border-color: gray;
+}
+
+.umx-marker .icon {
+	margin: 2px;
+	margin-top: 0;
+}
