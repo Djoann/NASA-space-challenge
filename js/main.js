@@ -125,7 +125,8 @@
         var view = this.view;
         view.on('click', function(e) {
             popup.setLatLng(e.latlng).setContent(
-                    "<h1>" + e.latlng.toString() + "</h1>").openOn(view);
+                    "<strong>" + e.latlng.lat + ";" + e.latlng.lng + "</strong>")
+                    .openOn(view);
         });
         var grid = new DebugGridLayer();
         view.addLayer(grid);
