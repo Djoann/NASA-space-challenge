@@ -13,7 +13,16 @@
             maxZoom : options.maxZoom,
             zoom : (options.zoom || options.minZoom)
         });
+        this.view.on('viewreset', this._onViewReset, this);
         this.initDebug(options);
+    }
+    /** This internal method is called to notify about changes of the zoom level */
+    ImageCanvas.prototype._onViewReset = function() {
+        if (this.markerGroup) {
+            this.markerGroup.eachLayer(function(marker) {
+                this._updateMarker(marker);
+            }, this);
+        }
     }
     /** An internal method setting a zoomable image on the screen */
     ImageCanvas.prototype._setImageInfo = function(imageInfo) {
@@ -32,6 +41,28 @@
                 imageInfo.height);
     }
 
+    /**
+     * This method is called to update marker styles when the zoom level is
+     * changed
+     */
+    ImageCanvas.prototype._updateMarker = function(marker) {
+        var viewZoom = this.view.getZoom();
+        var markerZoom = marker._annotation.zoom;
+        var className = "zoom";
+        if (viewZoom != undefined && markerZoom != undefined) {
+            var level = viewZoom - markerZoom;
+            if (level != 0) {
+                var prefix = level > 0 ? " zoom-in" : " zoom-out";
+                className += prefix;
+                for ( var i = 1; i < level; i++) {
+                    className += prefix + "-prev-" + i;
+                }
+                className += prefix + "-" + Math.abs(level);
+            }
+        }
+        // marker._icon.className = className;
+        console.log("Marker zoom classes: " + className)
+    }
     /** Creates and returns a new marker for the specified annotation. */
     ImageCanvas.prototype._newMarker = function(annotation) {
         var type = annotation.markerType || "icon-tag";
@@ -56,10 +87,11 @@
         marker.on("click", function() {
             marker.openPopup();
         })
+        marker._annotation = annotation;
         return marker;
     }
     /** An internal method binding annotations to the image */
-    ImageCanvas.prototype._setImageAnntations = function(imageAnnotations) {
+    ImageCanvas.prototype._setImageAnnotations = function(imageAnnotations) {
         if (this.imageAnnotations) {
             this.imageAnnotations = null;
         }
@@ -76,12 +108,13 @@
             var marker = this._newMarker(annotation);
             this.markerGroup.addLayer(marker);
         }
+        this._onViewReset();
     }
 
     /** Sets a new image */
     ImageCanvas.prototype.setImage = function(imageInfo, imageAnnotations) {
         this._setImageInfo(imageInfo);
-        this._setImageAnntations(imageAnnotations);
+        this._setImageAnnotations(imageAnnotations);
     }
 
     /** Initializes a debug information with this image canvas. */
@@ -94,6 +127,8 @@
             popup.setLatLng(e.latlng).setContent(
                     "<h1>" + e.latlng.toString() + "</h1>").openOn(view);
         });
+        var grid = new DebugGridLayer();
+        view.addLayer(grid);
     }
 
     /* --------------------------------------------------------------------- */
@@ -124,11 +159,15 @@
             return point;
         }
         var pos = getLatLng(section, "data-top-left");
-        var title = section.find("h1").html();
+        var markerType = section.attr("data-marker-icon") || "icon-tag";
+        var zoom = section.attr("data-zoom");
+        var title = section.attr("data-title") || section.find("h1").html();
         return {
             position : pos,
             content : section,
-            title : title
+            title : title,
+            zoom : zoom,
+            markerType : markerType
         };
     }
     /** Returns annotations extracted from the specified article tag */
@@ -164,7 +203,7 @@
      * Shows the content of the specified article on the screen around an image
      * defined in the article parameters.
      */
-    function showArticleContent(canvas, article) {
+    function showArticleContent(canvas, article) {
         var imageConfig = getImageConfig(article);
         var imageAnnotations = getImageAnnotations(article);
         canvas.setImage(imageConfig, imageAnnotations);
@@ -188,7 +227,7 @@
     /** Main function activating the screen */
     $(document).ready(function() {
         var canvas = new ImageCanvas({
-// debug : true,
+            debug : true,
             element : $("#main-canvas"),
             zoom : 11,
             maxZoom : 16,
