@@ -19,6 +19,30 @@ body {
 	right: 0px;
 	background-color: #01021E;
 }
+<<<<<<< HEAD
+=======
+ 
+ul, ol {
+    list-style: none;
+    margin: 10px;
+}
+
+.leaflet-container a {
+    top: 300px;
+    font-size: 14px;
+    text-decoration: none;
+    color: black;
+}
+
+
+li a:hover {
+    font-size: 20px;
+    text-decoration: none;
+    background-color: black;
+    color: white;
+    
+}
+>>>>>>> themes menu styling
 
 #navigation-bottom .navbar {
 	margin: 0;
