@@ -105,15 +105,20 @@
 
     /** Creates and returns a new marker for the specified annotation. */
     ImageCanvas.prototype._newMarker = function(annotation) {
-        var type = annotation.markerType || "icon-tag";
-        var title = annotation.title ? "<span class='umx-title'>"
-                + annotation.title + "</span>" : "";
+        var type = annotation.markerType;
+        if (type && "" != type) {
+            type = "<i class='icon " + type + "'></i>";
+        } else {
+            type = "";
+        }
+        var title = annotation.title ? 
+                annotation.title  : "";
         var icon = new L.DivIcon({
             iconSize : new L.Point(18, null),
             iconAnchor : new L.Point(9, 9),
             popupAnchor : new L.Point(0, 0),
-            className : "umx-marker umx-shadow",
-            html : "<div><i class='icon " + type + "'></i>" + title + "</div>"
+            className : "",
+            html : "<span class='umx-marker-title'>" + type + title + "</span>"
         });
         var marker = L.marker(annotation.topLeft, {
             icon : icon
@@ -253,12 +258,13 @@
 
     /** Returns an individual annotation extracted from the specified section tag */
     function getImageAnnotation(section) {
-        var markerType = section.attr("data-marker-icon") || "icon-tag";
+        var markerType = section.attr("data-marker-icon");
         var title = section.attr("data-title") || section.find("h1").html();
         var info = extractGeoInfo(section);
         if (info) {
             info.content = section;
             info.title = title;
+            info.markerType = markerType;
         }
         return info;
     }
@@ -365,7 +371,7 @@
     $(document).ready(function() {
         var mainCanvas = $("#main-canvas");
         var canvas = new ImageCanvas({
-            debug : true,
+// debug : true,
             element : mainCanvas,
             zoom : 11,
             maxZoom : 16,

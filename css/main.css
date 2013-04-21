@@ -19,7 +19,6 @@ body {
 	right: 0px;
 	background-color: #01021E;
 }
- 
 
 #navigation-bottom .navbar {
 	margin: 0;
@@ -41,34 +40,49 @@ body {
 	-webkit-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 }
 
-.umx-marker {
-	display: inline-block;
-	border-width: 3px;
-	border-style: solid;
-	-moz-border-radius: 18px;
-	-webkit-border-radius: 18px;
-	-khtml-border-radius: 18px;
-	border-radius: 18px;
-	background-color: white;
-	border-color: gray;
-	white-space: nowrap;
-}
-
 .leaflet-marker-icon {
 	width: none;
 	height: none;
+	white-space: nowrap;
+	opacity: 0.8;
+	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
+	-moz-box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+	-webkit-box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
 }
 
-.umx-marker .umx-title {
-	color: white;
-	margin-left: 0.5em;
-}
-
-.umx-marker .icon {
-	margin: 2px;
-	margin-top: 0;
+.umx-marker-title {
+	color: black;
+	background-color: white;
+	border: 1px solid white;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	border-radius: 3px;
+	padding: 0.2em;
 }
 
 .area-annotations {
 	background-color: white;
+}
+
+/** Zoom visualization */
+.zoom-out-2 .leaflet-marker-icon,.zoom-out-prev-1 .leaflet-marker-icon {
+	font-size: 0.8em;
+}
+
+.zoom-out-2 .leaflet-marker-icon .icon,.zoom-out-prev-1 .leaflet-marker-icon .icon
+	{
+	display: none;
+}
+
+.zoom-out-3 .leaflet-marker-icon,.zoom-out-prev-2 .leaflet-marker-icon {
+	font-size: 0.6em;
+}
+
+.zoom-in-1 .leaflet-marker-icon {
+	font-size: 1.4em;
+}
+
+.zoom-in-2 .leaflet-marker-icon,.zoom-in-prev-1 .leaflet-marker-icon {
+	font-size: 1.6em;
 }
