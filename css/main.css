@@ -117,3 +117,8 @@ themes menu styling
 .zoom-in-2 .leaflet-marker-icon,.zoom-in-prev-1 .leaflet-marker-icon {
 	font-size: 1.6em;
 }
+
+
+.highlight img {
+display:none;
+}
