@@ -199,6 +199,8 @@
     function extractGeoInfo(section) {
         section = $(section);
         var topLeft = getLatLng(section, "data-top-left");
+        if (!topLeft)
+            return null;
         var bottomRight = getLatLng(section, "data-bottom-right");
         bottomRight = bottomRight
                 || L.latLng(topLeft.lat + 0.01, topLeft.lng + 0.01);
@@ -215,8 +217,10 @@
         var markerType = section.attr("data-marker-icon") || "icon-tag";
         var title = section.attr("data-title") || section.find("h1").html();
         var info = extractGeoInfo(section);
-        info.content = section;
-        info.title = title;
+        if (info) {
+            info.content = section;
+            info.title = title;
+        }
         return info;
     }
 
@@ -226,7 +230,9 @@
         $(article).find("section").each(function() {
             var section = $(this);
             var annotation = getImageAnnotation(section);
-            result.push(annotation);
+            if (annotation) {
+                result.push(annotation);
+            }
         })
         return result;
     }
@@ -245,6 +251,8 @@
         list.find("li a").each(function(pos, element) {
             var item = $(element);
             var info = extractGeoInfo(item);
+            if (!info)
+                return;
             info.color = item.attr("data-zone-color");
             var idx = areas.length;
             var onClick = function(event) {
