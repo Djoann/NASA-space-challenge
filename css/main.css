@@ -19,30 +19,28 @@ body {
 	right: 0px;
 	background-color: #01021E;
 }
-<<<<<<< HEAD
-=======
- 
-ul, ol {
-    list-style: none;
-    margin: 10px;
+
+ul,ol  {
+	list-style: none;
+	margin: 10px;
 }
 
 .leaflet-container a {
-    top: 300px;
-    font-size: 14px;
-    text-decoration: none;
-    color: black;
+	top: 300px;
+	font-size: 14px;
+	text-decoration: none;
+	color: black;
 }
-
 
 li a:hover {
-    font-size: 20px;
-    text-decoration: none;
-    background-color: black;
-    color: white;
-    
+	font-size: 20px;
+	text-decoration: none;
+	background-color: black;
+	color: white;
 }
->>>>>>> themes menu styling
+
+>>>>>>>
+themes menu styling
 
 #navigation-bottom .navbar {
 	margin: 0;
@@ -85,8 +83,9 @@ li a:hover {
 	padding: 0.2em;
 }
 
-.area-annotations {
+.area-annotations .nav-tabs {
 	background-color: white;
+	width: 15em;
 }
 
 /** Zoom visualization */
