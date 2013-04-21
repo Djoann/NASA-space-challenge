@@ -47,11 +47,31 @@
 
     /** This internal method is called to notify about changes of the zoom level */
     ImageCanvas.prototype._onViewReset = function() {
-        if (this.markerGroup) {
-            this.markerGroup.eachLayer(function(marker) {
-                this._updateMarker(marker);
-            }, this);
+        var element = this.view._container;
+        var viewZoom = this.view.getZoom();
+        var markerZoom = this.options.annotationZoom || 12;
+        
+        var className = "zoom";
+        if (viewZoom != undefined && markerZoom != undefined) {
+            var level = viewZoom - markerZoom;
+            if (level != 0) {
+                var prefix = level > 0 ? " zoom-in" : " zoom-out";
+                level = Math.abs(level);
+                className += prefix;
+                for ( var i = 1; i < level; i++) {
+                    className += prefix + "-prev-" + i;
+                }
+                className += prefix + "-" + level;
+            }
         }
+        var oldClassName = element.className;
+        oldClassName = oldClassName.replace(/\zoom-(in|out)(-prev)?(-\d)?\b/g, '');
+        oldClassName = oldClassName.replace(/\zoom\b/g, '');
+        oldClassName = oldClassName.replace(/\s+/g, ' ');
+        if (oldClassName != "") {
+            oldClassName += " ";
+        }
+        element.className = oldClassName + className;
     }
 
     /** An internal method setting a zoomable image on the screen */
@@ -76,22 +96,8 @@
      * changed
      */
     ImageCanvas.prototype._updateMarker = function(marker) {
-        var viewZoom = this.view.getZoom();
-        var markerZoom = marker._annotation.zoom;
-        var className = "zoom";
-        if (viewZoom != undefined && markerZoom != undefined) {
-            var level = viewZoom - markerZoom;
-            if (level != 0) {
-                var prefix = level > 0 ? " zoom-in" : " zoom-out";
-                className += prefix;
-                for ( var i = 1; i < level; i++) {
-                    className += prefix + "-prev-" + i;
-                }
-                className += prefix + "-" + Math.abs(level);
-            }
-        }
-        // marker._icon.className = className;
-        console.log("Marker zoom classes: " + className)
+        marker._icon.className = oldClassName + " " + className;
+        // console.log("Marker zoom classes: " + className)
     }
 
     /** Creates and returns a new popup window with the specified content */
