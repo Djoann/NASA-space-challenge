@@ -1,5 +1,33 @@
 (function() {
 
+    /** Creates and return a new Bootstrap-based popup modal window */
+    function newPopup(options) {
+        var html = [];
+        html.push('<div class="modal hide fade" tabindex="-1"');
+        html.push('role="dialog" aria-hidden="true">');
+        html.push('<div class="modal-header">');
+        html.push('<button type="button" class="close" ');
+        html.push('data-dismiss="modal" aria-hidden="true">×</button>');
+        html.push('<h3 class="title">Modal header</h3>');
+        html.push('</div>');
+        html.push('<div class="modal-body">');
+        html.push('<p>One fine body…</p>');
+        html.push('</div>');
+        html.push('</div>');
+        var popup = $(html.join(""));
+        var title = options.title;
+        var content = options.content;
+        if (!title || "" == title) {
+            title = $(content).find("h1").remove();
+        }
+        if (options.noFade) {
+            popup.removeClass("fade");
+        }
+        popup.find(".modal-body").html("").append(content);
+        popup.find(".title").html("").append(title);
+        return popup.modal(options)
+    }
+
     /* --------------------------------------------------------------------- */
     /**
      * This class is used to bind zoomable images with the specified HTML
@@ -67,29 +95,7 @@
     }
 
     /** Creates and returns a new popup window with the specified content */
-    ImageCanvas.prototype._newPopup = function(title, content) {
-        var html = [];
-        html
-                .push('<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">');
-        html.push('<div class="modal-header">');
-        html
-                .push('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
-        html.push('<h3 class="title">Modal header</h3>');
-        html.push('</div>');
-        html.push('<div class="modal-body">');
-        html.push('<p>One fine body…</p>');
-        html.push('</div>');
-        html.push('</div>');
-        var popup = $(html.join(""));
-        if (!title || "" == title) {
-            title = $(content).find("h1").remove();
-        }
-        popup.find(".modal-body").html("").append(content);
-        popup.find(".title").html("").append(title);
-        return popup.modal({
-            show : false
-        })
-    }
+    ImageCanvas.prototype._newPopup = newPopup;
 
     /** Creates and returns a new marker for the specified annotation. */
     ImageCanvas.prototype._newMarker = function(annotation) {
@@ -107,17 +113,15 @@
             icon : icon
         });
 
-        var popup = this._newPopup(annotation.title, annotation.content);
-        // var content = $(annotation.content).get(0);
-        // marker.bindPopup(content, {
-        // maxWidth : 500,
-        // minWidth : 300,
-        // maxHeight : 300
-        // });
-
+        var popup = this._newPopup({
+            title : annotation.title,
+            content : annotation.content,
+            show : false,
+            backdrop : true,
+            keyboard : true
+        });
         marker.on("click", function() {
-            popup.modal("show")
-            // / marker.openPopup();
+            popup.modal("show");
         })
         marker._annotation = annotation;
         return marker;
@@ -335,12 +339,16 @@
      * Asynchronously loads and puts on the screen the information loaded from
      * the specified HTML file.
      */
-    function loadContent(canvas, href) {
+    function loadContent(canvas, href, callback) {
+        var that = this;
         $.ajax({
             url : href,
             success : function(result) {
                 var article = getArticle(result + "");
                 showArticleContent(canvas, article);
+                if (callback) {
+                    callback.call(that);
+                }
             },
             async : true
         });
@@ -349,24 +357,30 @@
 
     /** Main function activating the screen */
     $(document).ready(function() {
+        var mainCanvas = $("#main-canvas");
         var canvas = new ImageCanvas({
             debug : true,
-            element : $("#main-canvas"),
+            element : mainCanvas,
             zoom : 11,
             maxZoom : 16,
             minZoom : 8
         });
-        var mainArticle = $("article");
-        showArticleContent(canvas, mainArticle);
-        $("#navigation-bottom a").each(function(pos, e) {
-            e = $(e);
-            var href = e.attr("href");
-            $(e).click(function(event) {
-                loadContent(canvas, href);
-                event.stopPropagation();
-                return false;
-            });
+        var url = mainCanvas.attr("data-content-url");
+
+        var loadingPopup = newPopup({
+            title : "Loading...",
+            content : "Loading all data...",
+            show : false,
+            backdrop : false,
+            keyboard : false,
+            noFade : true
         });
+        loadingPopup.modal("show");
+        // setTimeout(function() {
+        loadContent(canvas, url, function() {
+            loadingPopup.modal("hide");
+        });
+        // }, 100);
     })
 
 })();
