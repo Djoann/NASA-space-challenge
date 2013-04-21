@@ -64,7 +64,7 @@ themes menu styling
 
 .leaflet-marker-icon {
 	width: none;
-	height: none;
+	height: 1.5em;
 	white-space: nowrap;
 	opacity: 0.8;
 	box-shadow: 0 1px 3px rgba(34, 25, 25, 0.4);
@@ -86,6 +86,10 @@ themes menu styling
 .area-annotations .nav-tabs {
 	background-color: white;
 	width: 15em;
+}
+
+.area-annotations .nav-tabs a {
+	color: navy;
 }
 
 /** Zoom visualization */
