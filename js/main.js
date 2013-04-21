@@ -66,6 +66,31 @@
         console.log("Marker zoom classes: " + className)
     }
 
+    /** Creates and returns a new popup window with the specified content */
+    ImageCanvas.prototype._newPopup = function(title, content) {
+        var html = [];
+        html
+                .push('<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">');
+        html.push('<div class="modal-header">');
+        html
+                .push('<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>');
+        html.push('<h3 class="title">Modal header</h3>');
+        html.push('</div>');
+        html.push('<div class="modal-body">');
+        html.push('<p>One fine body…</p>');
+        html.push('</div>');
+        html.push('</div>');
+        var popup = $(html.join(""));
+        if (!title || "" == title) {
+            title = $(content).find("h1").remove();
+        }
+        popup.find(".modal-body").html("").append(content);
+        popup.find(".title").html("").append(title);
+        return popup.modal({
+            show : false
+        })
+    }
+
     /** Creates and returns a new marker for the specified annotation. */
     ImageCanvas.prototype._newMarker = function(annotation) {
         var type = annotation.markerType || "icon-tag";
@@ -81,14 +106,18 @@
         var marker = L.marker(annotation.topLeft, {
             icon : icon
         });
-        var content = $(annotation.content).get(0);
-        marker.bindPopup(content, {
-            maxWidth : 500,
-            minWidth : 300,
-            maxHeight : 300
-        });
+
+        var popup = this._newPopup(annotation.title, annotation.content);
+        // var content = $(annotation.content).get(0);
+        // marker.bindPopup(content, {
+        // maxWidth : 500,
+        // minWidth : 300,
+        // maxHeight : 300
+        // });
+
         marker.on("click", function() {
-            marker.openPopup();
+            popup.modal("show")
+            // / marker.openPopup();
         })
         marker._annotation = annotation;
         return marker;

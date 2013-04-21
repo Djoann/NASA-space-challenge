@@ -15,17 +15,11 @@ body {
 	position: fixed;
 	top: 40px;
 	left: 0px;
-	bottom: 40px;
+	bottom: 0px;
 	right: 0px;
 	background-color: #01021E;
 }
-
-#navigation-bottom {
-	position: fixed;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-}
+ 
 
 #navigation-bottom .navbar {
 	margin: 0;
