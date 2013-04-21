@@ -371,11 +371,11 @@
     $(document).ready(function() {
         var mainCanvas = $("#main-canvas");
         var canvas = new ImageCanvas({
-// debug : true,
+//debug : true,
             element : mainCanvas,
             zoom : 11,
             maxZoom : 16,
-            minZoom : 8
+            minZoom : 10
         });
         var url = mainCanvas.attr("data-content-url");
 

@@ -66,6 +66,10 @@ body {
 }
 
 /** Zoom visualization */
+.zoom-out-2 .leaflet-marker-icon {
+	display: none;
+}
+
 .zoom-out-2 .leaflet-marker-icon,.zoom-out-prev-1 .leaflet-marker-icon {
 	font-size: 0.8em;
 }
