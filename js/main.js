@@ -16,6 +16,7 @@
         this.view.on('viewreset', this._onViewReset, this);
         this.initDebug(options);
     }
+
     /** This internal method is called to notify about changes of the zoom level */
     ImageCanvas.prototype._onViewReset = function() {
         if (this.markerGroup) {
@@ -24,6 +25,7 @@
             }, this);
         }
     }
+
     /** An internal method setting a zoomable image on the screen */
     ImageCanvas.prototype._setImageInfo = function(imageInfo) {
         if (this.imageCanvas) {
@@ -63,6 +65,7 @@
         // marker._icon.className = className;
         console.log("Marker zoom classes: " + className)
     }
+
     /** Creates and returns a new marker for the specified annotation. */
     ImageCanvas.prototype._newMarker = function(annotation) {
         var type = annotation.markerType || "icon-tag";
@@ -75,7 +78,7 @@
             className : "umx-marker umx-shadow",
             html : "<div><i class='icon " + type + "'></i>" + title + "</div>"
         });
-        var marker = L.marker(annotation.position, {
+        var marker = L.marker(annotation.topLeft, {
             icon : icon
         });
         var content = $(annotation.content).get(0);
@@ -90,6 +93,7 @@
         marker._annotation = annotation;
         return marker;
     }
+
     /** An internal method binding annotations to the image */
     ImageCanvas.prototype._setImageAnnotations = function(imageAnnotations) {
         if (this.imageAnnotations) {
@@ -111,10 +115,38 @@
         this._onViewReset();
     }
 
+    /** Adds highlighted zones to the image. */
+    ImageCanvas.prototype._setImageHighlights = function(imageHighlights) {
+        if (imageHighlights) {
+            // TODO: remove an already existing highlights
+            this.highlighter = new AreaHighlighter(this.view,
+                    imageHighlights.areas);
+            var controlContent = $(imageHighlights.content);
+            var NavigationControl = L.Control.extend({
+                options : {
+                    position : 'bottomleft'
+                },
+                onAdd : function(map) {
+                    return controlContent.get(0);
+                }
+            });
+            this.view.addControl(new NavigationControl());
+            this.highlighter.show();
+        }
+    }
+
     /** Sets a new image */
-    ImageCanvas.prototype.setImage = function(imageInfo, imageAnnotations) {
-        this._setImageInfo(imageInfo);
-        this._setImageAnnotations(imageAnnotations);
+    ImageCanvas.prototype.setImage = function(options) {
+        this._setImageInfo(options.image);
+        this._setImageAnnotations(options.annotations);
+        this._setImageHighlights(options.highlights);
+    }
+
+    /** Focus on a highlighted zone with the specified identifier */
+    ImageCanvas.prototype.focusOnZone = function(idx) {
+        if (!this.highlighter)
+            return;
+        this.highlighter.activateArea(idx);
     }
 
     /** Initializes a debug information with this image canvas. */
@@ -125,8 +157,8 @@
         var view = this.view;
         view.on('click', function(e) {
             popup.setLatLng(e.latlng).setContent(
-                    "<strong>" + e.latlng.lat + ";" + e.latlng.lng + "</strong>")
-                    .openOn(view);
+                    "<strong>" + e.latlng.lat + ";" + e.latlng.lng
+                            + "</strong>").openOn(view);
         });
         var grid = new DebugGridLayer();
         view.addLayer(grid);
@@ -149,28 +181,45 @@
             zoom : zoom
         };
     }
-    /** Returns an individual annotation extracted from the specified section tag */
-    function getImageAnnotation(section) {
-        function getLatLng(e, attr) {
-            var s = e.attr(attr);
-            if (!s)
-                return null;
-            var array = s.split(/;/);
-            var point = L.latLng(array);
-            return point;
-        }
-        var pos = getLatLng(section, "data-top-left");
-        var markerType = section.attr("data-marker-icon") || "icon-tag";
-        var zoom = section.attr("data-zoom");
-        var title = section.attr("data-title") || section.find("h1").html();
+
+    /**
+     * An utility method allowing to extract latitude/longitude from the
+     * specified attribute of the given element
+     */
+    function getLatLng(e, attr) {
+        var s = e.attr(attr);
+        if (!s)
+            return null;
+        var array = s.split(/;/);
+        var point = L.latLng(array);
+        return point;
+    }
+
+    /** Extract basic geographic information from the specified elemnet */
+    function extractGeoInfo(section) {
+        section = $(section);
+        var topLeft = getLatLng(section, "data-top-left");
+        var bottomRight = getLatLng(section, "data-bottom-right");
+        bottomRight = bottomRight
+                || L.latLng(topLeft.lat + 0.01, topLeft.lng + 0.01);
+        var zoom = section.attr("data-zoom") || 12;
         return {
-            position : pos,
-            content : section,
-            title : title,
-            zoom : zoom,
-            markerType : markerType
+            topLeft : topLeft,
+            bottomRight : bottomRight,
+            zoom : zoom
         };
     }
+
+    /** Returns an individual annotation extracted from the specified section tag */
+    function getImageAnnotation(section) {
+        var markerType = section.attr("data-marker-icon") || "icon-tag";
+        var title = section.attr("data-title") || section.find("h1").html();
+        var info = extractGeoInfo(section);
+        info.content = section;
+        info.title = title;
+        return info;
+    }
+
     /** Returns annotations extracted from the specified article tag */
     function getImageAnnotations(article) {
         var result = [];
@@ -179,6 +228,34 @@
             var annotation = getImageAnnotation(section);
             result.push(annotation);
         })
+        return result;
+    }
+
+    /** Returns highlighted zones defined in the article tag */
+    function getImageHighlights(article, callback) {
+        var list = article.find(".area-annotations");
+        list.css({
+            zIndex : 10000
+        });
+        var areas = [];
+        var result = {
+            areas : areas,
+            content : list
+        };
+        list.find("li a").each(function(pos, element) {
+            var item = $(element);
+            var info = extractGeoInfo(item);
+            info.color = item.attr("data-zone-color");
+            var idx = areas.length;
+            var onClick = function(event) {
+                callback.call(info, idx);
+                $.Event(event).stopPropagation();
+                return false;
+            };
+            item.click(onClick);
+            info.onClick = onClick;
+            areas.push(info);
+        });
         return result;
     }
 
@@ -205,9 +282,16 @@
      * defined in the article parameters.
      */
     function showArticleContent(canvas, article) {
-        var imageConfig = getImageConfig(article);
+        var imageInfo = getImageConfig(article);
         var imageAnnotations = getImageAnnotations(article);
-        canvas.setImage(imageConfig, imageAnnotations);
+        var imageHighlights = getImageHighlights(article, function(idx) {
+            canvas.focusOnZone(idx);
+        });
+        canvas.setImage({
+            image : imageInfo,
+            annotations : imageAnnotations,
+            highlights : imageHighlights
+        });
     }
 
     /**
@@ -224,6 +308,7 @@
             async : true
         });
     }
+    showArticleContent
 
     /** Main function activating the screen */
     $(document).ready(function() {
